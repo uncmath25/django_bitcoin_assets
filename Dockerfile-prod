@@ -1,0 +1,26 @@
+FROM python:3.13-slim
+
+ARG BUILD_DEPS=" \
+        build-essential \
+    "
+RUN set -ex \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $BUILD_DEPS
+
+RUN pip3 install --upgrade pip
+COPY ./requirements.txt .
+RUN pip3 install --no-cache-dir -r /requirements.txt
+RUN pip3 install uwsgi==2.0.28
+
+ARG PROJECT_PATH=/django_project
+RUN mkdir $PROJECT_PATH
+WORKDIR $PROJECT_PATH
+ADD src $PROJECT_PATH
+
+ENV DJANGO_SETTINGS_MODULE=admin.settings
+ENV UWSGI_WSGI_FILE=$PROJECT_PATH/src/wsgi.py
+ENV UWSGI_HTTP=:8000 UWSGI_WORKERS=2 UWSGI_THREADS=4
+ENV UWSGI_MASTER=1 UWSGI_HTTP_AUTO_CHUNKED=1 UWSGI_HTTP_KEEPALIVE=1 UWSGI_UID=1000 UWSGI_GID=2000 UWSGI_LAZY_APPS=1 UWSGI_WSGI_ENV_BEHAVIOR=holy
+
+COPY entrypoint-prod.sh /entrypoint.sh
+ENTRYPOINT  ["/entrypoint.sh"]

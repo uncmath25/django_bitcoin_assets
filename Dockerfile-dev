@@ -1,0 +1,15 @@
+FROM python:3.13-slim
+
+RUN pip3 install --upgrade pip
+COPY ./requirements.txt .
+RUN pip3 install --no-cache-dir -r /requirements.txt
+
+ARG PROJECT_PATH=/django_project
+RUN mkdir $PROJECT_PATH
+WORKDIR $PROJECT_PATH
+ADD src $PROJECT_PATH
+
+ENV DJANGO_SETTINGS_MODULE=admin.settings
+
+COPY entrypoint-dev.sh /entrypoint.sh
+ENTRYPOINT  ["/entrypoint.sh"]
