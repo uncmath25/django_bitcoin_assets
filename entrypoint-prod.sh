@@ -1,3 +1,3 @@
 #!/bin/bash
-python3 src/manage.py collectstatic --noinput
-uwsgi --ini src/wsgi.ini
+python3 manage.py collectstatic --noinput
+uwsgi --ini wsgi.ini
