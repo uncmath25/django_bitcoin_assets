@@ -2,6 +2,9 @@ FROM python:3.13-slim
 
 ARG BUILD_DEPS=" \
         build-essential \
+        default-libmysqlclient-dev \
+        pkg-config \
+        python3-dev \
     "
 RUN set -ex \
     && apt-get update \

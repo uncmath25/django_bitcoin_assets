@@ -1,5 +1,6 @@
 .PHONY: clean run-dev stop-dev run-prod stop-prod
 
+DB_IMAGE="mariadb:11.5"
 DEV_IMAGE="uncmath25/django_bitcoin_assets_dev"
 REMOTE_DEV_DIR="/django_project"
 PROD_IMAGE="uncmath25/django_bitcoin_assets_prod"
@@ -18,26 +19,28 @@ clean:
 
 run-dev: clean
 	@echo "*** Running Django dev server ***"
+	docker run -d --rm -e MYSQL_HOST=host.docker.internal -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 \
+		-v $$(pwd)/database/sample_dump.sql:/docker-entrypoint-initdb.d/dump.sql $(DB_IMAGE)
+	sleep 5
 	docker build -t $(DEV_IMAGE) -f Dockerfile-dev .
-	docker run --rm -p 8000:8000 -v $$(pwd)/src:$(REMOTE_DEV_DIR) $(DEV_IMAGE)
+	docker run --rm --env-file=.env.dev -p 8000:8000 -v $$(pwd)/src:$(REMOTE_DEV_DIR) $(DEV_IMAGE)
 
 stop-dev:
 	@echo "*** Stopping Django dev server ***"
+	docker rm -f "$$(docker ps -q --filter ancestor=$(DB_IMAGE))"
 	docker rm -f "$$(docker ps -q --filter ancestor=$(DEV_IMAGE))"
 
 run-prod: clean
 	@echo "*** Running Django prod server ***"
-	# docker run \
-	# 	-d --rm \
-	# 	-e MYSQL_DATABASE="bitcoin_assets" \
-	# 	-e MYSQL_ROOT_PASSWORD="PASSWORD" \
-	# 	-p 3306:3306 \
-	# 	mariadb:11.3.2
+	docker run -d --rm -e MYSQL_HOST=host.docker.internal -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 \
+		-v $$(pwd)/database/sample_dump.sql:/docker-entrypoint-initdb.d/dump.sql $(DB_IMAGE)
+	sleep 5
 	docker build -t $(PROD_IMAGE) -f Dockerfile-prod .
-	docker run --rm -p 8000:8000 $(PROD_IMAGE)
+	docker run --rm --env-file=.env.dev -p 8000:8000 $(PROD_IMAGE)
 
 stop-prod:
 	@echo "*** Stopping Django prod server ***"
+	docker rm -f "$$(docker ps -q --filter ancestor=$(DB_IMAGE))"
 	docker rm -f "$$(docker ps -q --filter ancestor=$(PROD_IMAGE))"
 
 deploy: clean
@@ -54,6 +57,6 @@ deploy: clean
 	# 	cd $(REMOTE_PARENT_WEBSITE_DIR); \
 	# 	docker rm -f $(PROD_IMAGE); \
 	# 	docker build -t $(PROD_IMAGE) -f Dockerfile-prod .; \
-	# 	docker run --rm --network host --name $(PROD_CONTAINER_NAME) $(PROD_IMAGE); \
+	# 	docker run --rm --env-file=.env --network host --name $(PROD_CONTAINER_NAME) $(PROD_IMAGE); \
 	# "
 	@echo "*** Restart the remote server with _restart_server.sh ***"

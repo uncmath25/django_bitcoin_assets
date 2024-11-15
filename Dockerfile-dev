@@ -1,5 +1,15 @@
 FROM python:3.13-slim
 
+ARG BUILD_DEPS=" \
+        build-essential \
+        default-libmysqlclient-dev \
+        pkg-config \
+        python3-dev \
+    "
+RUN set -ex \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends $BUILD_DEPS
+
 RUN pip3 install --upgrade pip
 COPY ./requirements.txt .
 RUN pip3 install --no-cache-dir -r /requirements.txt
