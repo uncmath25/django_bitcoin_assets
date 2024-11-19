@@ -1,3 +1,8 @@
+# mysql -h 127.0.0.1 -u root -proot
+# use bitcoin_assets;
+# show tables;
+# select * from bitcoin_assets_transaction;
+
 r = requests.get('https://swapi.dev/api/starships/9/')
 r = requests.get('https://coinmarketcap.com/currencies/bitcoin/')
 

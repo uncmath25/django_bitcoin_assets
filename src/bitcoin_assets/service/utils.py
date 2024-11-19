@@ -1,5 +1,5 @@
 def format_price(p):
-    p = round(p, 2)
+    p = round(float(p), 2)
     p = str(p)
     pt_idx = p.index('.')
     while pt_idx > 3:
@@ -8,3 +8,6 @@ def format_price(p):
     if len(p.split('.')[1]) == 1:
         p += '0'
     return '$' + p
+
+def format_perc(r):
+    return str(round(100 * r)) + '%'
