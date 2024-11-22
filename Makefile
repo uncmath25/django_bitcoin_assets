@@ -33,31 +33,23 @@ stop-dev:
 
 run-prod: clean
 	@echo "*** Running Django prod server ***"
-	docker run -d --rm -e MYSQL_HOST=host.docker.internal -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 \
-		-v $$(pwd)/database/sample_dump_prod.sql:/docker-entrypoint-initdb.d/dump.sql $(DB_IMAGE)
-	sleep 5
 	docker build -t $(PROD_IMAGE) -f Dockerfile-prod .
-	docker run --rm --env-file=.env.dev -p 8000:8000 $(PROD_IMAGE)
+	docker run --rm --env-file=.env.prod -p 8000:8000 $(PROD_IMAGE)
 
 stop-prod:
 	@echo "*** Stopping Django prod server ***"
-	docker rm -f "$$(docker ps -q --filter ancestor=$(DB_IMAGE))"
 	docker rm -f "$$(docker ps -q --filter ancestor=$(PROD_IMAGE))"
 
 deploy: clean
 	@echo "*** Deploying Dockerized Django app to DigitalOcean droplet... ***"
 	docker build --platform=linux/x86_64 -t $(REMOTE_PROD_IMAGE) -f Dockerfile-prod .
 	docker save $(REMOTE_PROD_IMAGE) | ssh -C $(REMOTE_SERVER_PROFILE) docker load
+	ssh $(REMOTE_SERVER_PROFILE) rm -rf $(REMOTE_PARENT_WEBSITE_DIR)
+	scp -r ./* $(REMOTE_SERVER_PROFILE):$(REMOTE_PARENT_WEBSITE_DIR)
+	scp -r .env $(REMOTE_SERVER_PROFILE):$(REMOTE_PARENT_WEBSITE_DIR)
 	ssh $(REMOTE_SERVER_PROFILE) "\
+		cd $(REMOTE_PARENT_WEBSITE_DIR); \
 		docker rm -f $(REMOTE_PROD_CONTAINER); \
-		docker run --rm -d --network host --name $(REMOTE_PROD_CONTAINER) $(REMOTE_PROD_IMAGE); \
+		docker run --rm -d --env-file=.env --network host --name $(REMOTE_PROD_CONTAINER) $(REMOTE_PROD_IMAGE); \
 	"
-	# ssh $(REMOTE_SERVER_PROFILE) rm -rf $(REMOTE_PARENT_WEBSITE_DIR)
-	# scp -r ./* $(REMOTE_SERVER_PROFILE):$(REMOTE_PARENT_WEBSITE_DIR)
-	# ssh $(REMOTE_SERVER_PROFILE) "\
-	# 	cd $(REMOTE_PARENT_WEBSITE_DIR); \
-	# 	docker rm -f $(PROD_IMAGE); \
-	# 	docker build -t $(PROD_IMAGE) -f Dockerfile-prod .; \
-	# 	docker run --rm --env-file=.env --network host --name $(PROD_CONTAINER_NAME) $(PROD_IMAGE); \
-	# "
 	@echo "*** Restart the remote server with _restart_server.sh ***"

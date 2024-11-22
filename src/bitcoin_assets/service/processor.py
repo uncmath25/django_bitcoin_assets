@@ -1,4 +1,4 @@
-from ..models import BitcoinTransaction
+from ..models import Transaction
 from .http_client import HTTPClient
 from .utils import format_perc, format_price
 
@@ -8,13 +8,13 @@ def build_context():
     mstr_price = HTTPClient.get_cnbc_quote('MSTR')
     ibit_price = HTTPClient.get_cnbc_quote('IBIT')
     bitb_price = HTTPClient.get_cnbc_quote('BITB')
-    bitcoin_transactions = BitcoinTransaction.objects.values()
-    total_bitcoin = float(sum([r['bitcoin'] for r in bitcoin_transactions]))
+    bitcoin_transactions = Transaction.objects.values()
+    total_bitcoin = float(sum([r['amount'] for r in bitcoin_transactions]))
     bitcoin_assets = bitcoin_price * total_bitcoin
     etf_assets = 0
     mstr_assets = 0
     total_assets = bitcoin_assets + etf_assets + mstr_assets
-    bitcoin_cost_basis = float(sum([r['price'] * r['bitcoin'] for r in bitcoin_transactions])) / total_bitcoin
+    bitcoin_cost_basis = float(sum([r['price'] * r['amount'] for r in bitcoin_transactions])) / total_bitcoin
     etf_cost_basis = 1
     mstr_cost_basis = 1
     bitcoin_perc = bitcoin_assets / total_assets

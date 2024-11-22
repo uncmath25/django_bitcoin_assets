@@ -4,4 +4,6 @@ db.sqlite3
 migrations
 src/static
 
+database/prod_create.sql
 .env
+.env.prod
