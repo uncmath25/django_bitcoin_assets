@@ -5,97 +5,82 @@
         <div class="col-xs-12" style="padding: 20px;"></div>
       </div>
     <div class="row">
-        <div class="col-xs-12 col-lg-3">
+        <div class="col-xs-12 col-lg-6">
             <div class="table-responsive">
                 <table id='todo-list-items-table' class="table table-striped table-hover table-bordered">
                     <tbody>
                         <tr>
-                            <td>Total Assets:</td>
-                            <td>{{ total_assets }}</td>
+                            <th></th>
+                            <th>Total</th>
+                            <th>Bitcoin</th>
+                            <th>ETF</th>
+                            <th>Stock</th>
                         </tr>
                         <tr>
-                            <td>Bitcoin Assets:</td>
-                            <td>{{ bitcoin_assets }}</td>
+                            <th>Current Cost Basis</th>
+                            <td>{{ total_current_cost_basis }}</td>
+                            <td>{{ bitcoin_current_cost_basis }}</td>
+                            <td>{{ etf_current_cost_basis }}</td>
+                            <td>{{ stock_current_cost_basis }}</td>
                         </tr>
                         <tr>
-                            <td>Total Cost Basis:</td>
-                            <td>{{ total_cost_basis }}</td>
-                        </tr>
-                        <tr>
-                            <td>Bitcoin Cost Basis:</td>
-                            <td>{{ bitcoin_cost_basis }}</td>
+                            <th>Current Balance</th>
+                            <td>{{ total_current_balance }}</td>
+                            <td>{{ bitcoin_current_balance }}</td>
+                            <td>{{ etf_current_balance }}</td>
+                            <td>{{ stock_current_balance }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="col-xs-12 col-lg-3">
+        <div class="col-xs-6 col-lg-3">
             <div class="table-responsive">
                 <table id='todo-list-items-table' class="table table-striped table-hover table-bordered">
                     <tbody>
                         <tr>
-                            <td>Total ROI:</td>
-                            <td>{{ total_roi }}</td>
-                        </tr>
-                        <tr>
-                            <td>Bitcoin ROI:</td>
-                            <td>{{ bitcoin_roi }}</td>
-                        </tr>
-                        <tr>
-                            <td>ETF ROI:</td>
-                            <td>{{ etf_roi }}</td>
-                        </tr>
-                        <tr>
-                            <td>MSTR ROI:</td>
-                            <td>{{ mstr_roi }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-xs-12 col-lg-3">
-            <div class="table-responsive">
-                <table id='todo-list-items-table' class="table table-striped table-hover table-bordered">
-                    <tbody>
-                        <tr>
-                            <td>Total Profit</td>
-                            <td>{{ total_profit }}</td>
-                        </tr>
-                        <tr>
-                            <td>Bitcoin %:</td>
-                            <td>{{ bitcoin_perc }}</td>
-                        </tr>
-                        <tr>
-                            <td>ETF %:</td>
-                            <td>{{ etf_perc }}</td>
-                        </tr>
-                        <tr>
-                            <td>MSTR %:</td>
-                            <td>{{ mstr_perc }}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="col-xs-12 col-lg-3">
-            <div class="table-responsive">
-                <table id='todo-list-items-table' class="table table-striped table-hover table-bordered">
-                    <tbody>
-                        <tr>
-                            <td>Bitcoin Price:</td>
+                            <th>Bitcoin</th>
                             <td>{{ bitcoin_price }}</td>
                         </tr>
                         <tr>
-                            <td>MSTR Price:</td>
-                            <td>{{ mstr_price }}</td>
-                        </tr>
-                        <tr>
-                            <td>IBIT Price:</td>
+                            <th>IBIT</th>
                             <td>{{ ibit_price }}</td>
                         </tr>
                         <tr>
-                            <td>BITB Price:</td>
+                            <th>BITB</th>
                             <td>{{ bitb_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>MSTR</th>
+                            <td>{{ mstr_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>IBIT Call Jan_16_26_75</th>
+                            <td>{{ ibit_call_1_price }}</td>
+                        </tr>
+                        <tr>
+                            <th>IBIT Call Jan_16_26_100</th>
+                            <td>{{ ibit_call_2_price }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-6 col-lg-3">
+            <div class="table-responsive">
+                <table id='todo-list-items-table' class="table table-striped table-hover table-bordered">
+                    <tbody>
+                        <tr>
+                            <th>Total Bitcoin</th>
+                            <td>{{ total_bitcoin }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total Bitcoin (+ ETF)</th>
+                            <td>{{ total_bitcoin_etf }}</td>
+                        </tr>
+                        <tr>
+                            <th>Bitcoin Price Basis</th>
+                            <td>{{ bitcoin_cost_basis }}</td>
                         </tr>
                     </tbody>
                 </table>

@@ -13,7 +13,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'django-insecure-&7z-pqp77tf4*t^c0-720ll2r7*54%9g_^2%^gr8i-d@f%8%ot'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', 'bitcoin-assets.coltonwillig.com']
 

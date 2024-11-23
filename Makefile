@@ -20,10 +20,10 @@ clean:
 
 run-dev: clean
 	@echo "*** Running Django dev server ***"
+	docker build -t $(DEV_IMAGE) -f Dockerfile-dev .
 	docker run -d --rm -e MYSQL_HOST=host.docker.internal -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 \
 		-v $$(pwd)/database/sample_dump_dev.sql:/docker-entrypoint-initdb.d/dump.sql $(DB_IMAGE)
 	sleep 5
-	docker build -t $(DEV_IMAGE) -f Dockerfile-dev .
 	docker run --rm --env-file=.env.dev -p 8000:8000 -v $$(pwd)/src:$(REMOTE_DEV_DIR) $(DEV_IMAGE)
 
 stop-dev:

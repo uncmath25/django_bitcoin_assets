@@ -1,4 +1,8 @@
 def format_price(p):
+    ans = format_full_price(p)
+    return ans.split('.')[0]
+
+def format_full_price(p):
     p = round(float(p), 2)
     p = str(p)
     pt_idx = p.index('.')
@@ -11,3 +15,6 @@ def format_price(p):
 
 def format_perc(r):
     return str(round(100 * r)) + '%'
+
+def format_bitcoin(amount):
+    return round(float(amount), 4)

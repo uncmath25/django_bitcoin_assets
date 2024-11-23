@@ -11,7 +11,7 @@ class Command(BaseCommand):
         parser.add_argument('date', type=str)
         parser.add_argument('price', type=float)
         parser.add_argument('amount', type=float)
-        parser.add_argument('cost', type=float)
+        parser.add_argument('fee', type=float)
 
     def handle(self, *args, **options):
         item = Transaction(
@@ -20,6 +20,6 @@ class Command(BaseCommand):
             date=options['date'],
             price=options['price'],
             amount=options['amount'],
-            cost=options['cost'])
+            fee=options['fee'])
         item.save()
         self.stdout.write(self.style.SUCCESS('Transaction added successfully!'))
