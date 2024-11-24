@@ -25,10 +25,45 @@
                         </tr>
                         <tr>
                             <th>Current Balance</th>
-                            <td>{{ total_current_balance }}</td>
-                            <td>{{ bitcoin_current_balance }}</td>
-                            <td>{{ etf_current_balance }}</td>
-                            <td>{{ stock_current_balance }}</td>
+                            <th>{{ total_current_balance }}</th>
+                            <th>{{ bitcoin_current_balance }}</th>
+                            <th>{{ etf_current_balance }}</th>
+                            <th>{{ stock_current_balance }}</th>
+                        </tr>
+                        <tr>
+                            <th>Unrealized Gains</th>
+                            <td>{{ total_unrealized_gains }}</td>
+                            <td>{{ bitcoin_unrealized_gains }}</td>
+                            <td>{{ etf_unrealized_gains }}</td>
+                            <td>{{ stock_unrealized_gains }}</td>
+                        </tr>
+                        <tr>
+                            <th>Realized Gains</th>
+                            <td>{{ total_realized_gains }}</td>
+                            <td>{{ bitcoin_realized_gains }}</td>
+                            <td>{{ etf_realized_gains }}</td>
+                            <td>{{ stock_realized_gains }}</td>
+                        </tr>
+                        <tr>
+                            <th>Profit</th>
+                            <th>{{ total_profit }}</th>
+                            <th>{{ bitcoin_profit }}</th>
+                            <th>{{ etf_profit }}</th>
+                            <th>{{ stock_profit }}</th>
+                        </tr>
+                        <tr>
+                            <th>ROI</th>
+                            <td>{{ total_roi }}</td>
+                            <td>{{ bitcoin_roi }}</td>
+                            <td>{{ etf_roi }}</td>
+                            <td>{{ stock_roi }}</td>
+                        </tr>
+                        <tr>
+                            <th>Current Allocation</th>
+                            <td></td>
+                            <td>{{ bitcoin_current_allocation }}</td>
+                            <td>{{ etf_current_allocation }}</td>
+                            <td>{{ stock_current_allocation }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -38,30 +73,12 @@
             <div class="table-responsive">
                 <table id='todo-list-items-table' class="table table-striped table-hover table-bordered">
                     <tbody>
+                        {% for name, price in prices.items %} 
                         <tr>
-                            <th>Bitcoin</th>
-                            <td>{{ bitcoin_price }}</td>
+                            <th>{{ name }}</th>
+                            <td>{{ price }}</td>
                         </tr>
-                        <tr>
-                            <th>IBIT</th>
-                            <td>{{ ibit_price }}</td>
-                        </tr>
-                        <tr>
-                            <th>BITB</th>
-                            <td>{{ bitb_price }}</td>
-                        </tr>
-                        <tr>
-                            <th>MSTR</th>
-                            <td>{{ mstr_price }}</td>
-                        </tr>
-                        <tr>
-                            <th>IBIT Call Jan_16_26_75</th>
-                            <td>{{ ibit_call_1_price }}</td>
-                        </tr>
-                        <tr>
-                            <th>IBIT Call Jan_16_26_100</th>
-                            <td>{{ ibit_call_2_price }}</td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
