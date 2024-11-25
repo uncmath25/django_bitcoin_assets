@@ -11,6 +11,8 @@ def format_full_price(p):
         p = p[:pt_idx] + ',' + p[pt_idx:]
     if len(p.split('.')[1]) == 1:
         p += '0'
+    if p[:2] == '-,':
+        p = '-' + p[2:]
     return '$' + p
 
 def format_perc(r):

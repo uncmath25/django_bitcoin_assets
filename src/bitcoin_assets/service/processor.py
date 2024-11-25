@@ -53,7 +53,7 @@ def _get_prices():
     prices = {}
     prices[BITCOIN_NAME] = HTTPClient.get_bitcoin_price()
     prices[IBIT_NAME] = HTTPClient.get_cnbc_quote(IBIT_NAME)
-    prices[BITB_NAME] = HTTPClient.get_cnbc_quote(BITB_NAME)
+    # prices[BITB_NAME] = HTTPClient.get_cnbc_quote(BITB_NAME)
     prices[MSTR_NAME] = HTTPClient.get_cnbc_quote(MSTR_NAME)
     # Temporary hack as option prices can not be scraped
     import os
@@ -93,10 +93,10 @@ def _build_context_data(raw_transactions, prices):
     stock_profit = stock_unrealized_gains + stock_realized_gains
     total_profit = bitcoin_profit + etf_profit + stock_profit
     # ROI
-    total_roi = _compute_grouped_roi(transactions, prices, [BITCOIN_NAME] + ETF_NAMES + STOCK_NAMES)
-    bitcoin_roi = _compute_grouped_roi(transactions, prices, [BITCOIN_NAME])
-    etf_roi = _compute_grouped_roi(transactions, prices, ETF_NAMES)
-    stock_roi = _compute_grouped_roi(transactions, prices, STOCK_NAMES)
+    # total_roi = _compute_grouped_roi(transactions, prices, [BITCOIN_NAME] + ETF_NAMES + STOCK_NAMES)
+    # bitcoin_roi = _compute_grouped_roi(transactions, prices, [BITCOIN_NAME])
+    # etf_roi = _compute_grouped_roi(transactions, prices, ETF_NAMES)
+    # stock_roi = _compute_grouped_roi(transactions, prices, STOCK_NAMES)
     # Current Allocation
     bitcoin_current_allocation = bitcoin_current_balance / total_current_balance
     etf_current_allocation = etf_current_balance / total_current_balance
@@ -129,10 +129,10 @@ def _build_context_data(raw_transactions, prices):
         'bitcoin_profit': format_price(bitcoin_profit),
         'etf_profit': format_price(etf_profit),
         'stock_profit': format_price(stock_profit),
-        'total_roi': format_perc(total_roi),
-        'bitcoin_roi': format_perc(bitcoin_roi),
-        'etf_roi': format_perc(etf_roi),
-        'stock_roi': format_perc(stock_roi),
+        # 'total_roi': format_perc(total_roi),
+        # 'bitcoin_roi': format_perc(bitcoin_roi),
+        # 'etf_roi': format_perc(etf_roi),
+        # 'stock_roi': format_perc(stock_roi),
         'bitcoin_current_allocation': format_perc(bitcoin_current_allocation),
         'etf_current_allocation': format_perc(etf_current_allocation),
         'stock_current_allocation': format_perc(stock_current_allocation),
@@ -191,7 +191,8 @@ def _compute_grouped_current_balance(transactions, prices, names_to_group):
     for name in names_to_group:
         if name in transactions:
             total_open_amount = sum([t[AMOUNT_KEY] for t in transactions[name] if not t[IS_CLOSED_KEY]])
-            current_balance += prices[name] * total_open_amount
+            if total_open_amount > 0:
+                current_balance += prices[name] * total_open_amount
     return current_balance
 
 def _compute_grouped_realized_gains(transactions, names_to_group):
