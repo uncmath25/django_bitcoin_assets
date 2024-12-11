@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import os
 import requests
 
 
@@ -20,3 +21,8 @@ class HTTPClient():
         # soup = BeautifulSoup(r.content, "html.parser")
         # return soup.findAll('span', {'data-test': 'text-cdp-price-display'})[0].text
         return HTTPClient.get_cnbc_quote('BTC.CM=')
+    
+    @staticmethod
+    def get_option_price(option_name):
+        # Temporary hack as option prices can not be scraped
+        return float(os.environ[option_name + '_PRICE'])

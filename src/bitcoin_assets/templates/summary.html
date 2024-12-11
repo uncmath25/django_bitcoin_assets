@@ -11,59 +11,51 @@
                     <tbody>
                         <tr>
                             <th></th>
-                            <th>Total</th>
-                            <th>Bitcoin</th>
-                            <th>ETF</th>
-                            <th>Stock</th>
+                            {% for category in categories %} 
+                            <th>{{ category }}</th>
+                            {% endfor %}
                         </tr>
                         <tr>
                             <th>Current Cost Basis</th>
-                            <td>{{ total_current_cost_basis }}</td>
-                            <td>{{ bitcoin_current_cost_basis }}</td>
-                            <td>{{ etf_current_cost_basis }}</td>
-                            <td>{{ stock_current_cost_basis }}</td>
+                            {% for current_cost_basis in current_cost_bases %} 
+                            <td>{{ current_cost_basis }}</td>
+                            {% endfor %}
                         </tr>
                         <tr>
-                            <th>Current Balance</th>
-                            <th>{{ total_current_balance }}</th>
-                            <th>{{ bitcoin_current_balance }}</th>
-                            <th>{{ etf_current_balance }}</th>
-                            <th>{{ stock_current_balance }}</th>
+                            <th>Current Balance</td>
+                            {% for current_balance in current_balances %} 
+                            <th>{{ current_balance }}</th>
+                            {% endfor %}
                         </tr>
                         <tr>
                             <th>Unrealized Gains</th>
-                            <td>{{ total_unrealized_gains }}</td>
-                            <td>{{ bitcoin_unrealized_gains }}</td>
-                            <td>{{ etf_unrealized_gains }}</td>
-                            <td>{{ stock_unrealized_gains }}</td>
+                            {% for unrealized_gain in unrealized_gains %} 
+                            <td>{{ unrealized_gain }}</td>
+                            {% endfor %}
                         </tr>
                         <tr>
                             <th>Realized Gains</th>
-                            <td>{{ total_realized_gains }}</td>
-                            <td>{{ bitcoin_realized_gains }}</td>
-                            <td>{{ etf_realized_gains }}</td>
-                            <td>{{ stock_realized_gains }}</td>
+                            {% for realized_gain in realized_gains %} 
+                            <td>{{ realized_gain }}</td>
+                            {% endfor %}
                         </tr>
                         <tr>
                             <th>Profit</th>
-                            <th>{{ total_profit }}</th>
-                            <th>{{ bitcoin_profit }}</th>
-                            <th>{{ etf_profit }}</th>
-                            <th>{{ stock_profit }}</th>
+                            {% for profit in profits %} 
+                            <th>{{ profit }}</th>
+                            {% endfor %}
                         </tr>
                         <!-- <tr>
                             <th>ROI</th>
-                            <td>{{ total_roi }}</td>
-                            <td>{{ bitcoin_roi }}</td>
-                            <td>{{ etf_roi }}</td>
-                            <td>{{ stock_roi }}</td>
+                            {% for roi in rois %} 
+                            <td>{{ roi }}</td>
+                            {% endfor %}
                         </tr> -->
                         <tr>
                             <th>Current Allocation</th>
-                            <td></td>
-                            <td>{{ bitcoin_current_allocation }}</td>
-                            <td>{{ etf_current_allocation }}</td>
-                            <td>{{ stock_current_allocation }}</td>
+                            {% for allocation in allocations %} 
+                            <td>{{ allocation }}</td>
+                            {% endfor %}
                         </tr>
                     </tbody>
                 </table>
