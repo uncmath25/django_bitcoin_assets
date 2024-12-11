@@ -1,4 +1,4 @@
-from ..models import Transaction
+from ..models import Price, Transaction
 from .http_client import HTTPClient
 from .utils import format_bitcoin, format_full_price, format_perc, format_price
 
@@ -37,6 +37,7 @@ MATCH_ID_KEY = 'match_id'
 def build_context():
     transactions = _clean_transactions(_get_raw_transactions())
     prices = _get_prices(transactions)
+    _save_prices(prices)
     return _build_context_data(transactions, prices)
 
 def _get_raw_transactions():
@@ -211,3 +212,32 @@ def get_bitcoin_per_share(name):
     if name == BITB_NAME:
         return 0.000545
     raise Exception(f'{name} not supported!')
+
+
+def _get_historical_prices():
+    prices = {}
+    DATE_KEY = 'date'
+    for r in Price.objects.values():
+        name = str(r[NAME_KEY])
+        price = float(r[PRICE_KEY])
+        date = str(r[DATE_KEY])
+        if date not in prices:
+            prices[date] = {name: price}
+        else:
+            prices[date][name] = price
+    return prices
+
+def _save_prices(prices):
+    current_date = _get_current_date()
+    existing_prices = Price.objects.filter(date=current_date)
+    if len(existing_prices) > 0:
+        for r in existing_prices:
+            r.price = prices[r.name]
+            r.save()
+    else:
+        for name in prices:
+            Price(name=name, date=current_date, price=prices[name]).save()
+
+def _get_current_date():
+    from datetime import datetime
+    return datetime.today().strftime('%Y-%m-%d')

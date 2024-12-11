@@ -15,3 +15,10 @@ class Transaction(models.Model):
     fee = models.DecimalField(max_digits=12, decimal_places=2)
     class Meta:
         db_table = 'transaction'
+
+class Price(models.Model):
+    name = models.CharField(max_length=32)
+    date = models.DateField()
+    price = models.DecimalField(max_digits=12, decimal_places=2)
+    class Meta:
+        db_table = 'price'
