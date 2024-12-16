@@ -1,13 +1,13 @@
 from django.core.management.base import BaseCommand
-from bitcoin_assets.models import Transaction
+from bitcoin_assets.models import Asset, Transaction
 
 
 class Command(BaseCommand):
     help = 'Adds a transaction to the database'
 
     def add_arguments(self, parser):
-        parser.add_argument('name', type=str)
-        parser.add_argument('type', type=str)
+        parser.add_argument('asset_id', type=int)
+        parser.add_argument('is_sell', type=int)
         parser.add_argument('date', type=str)
         parser.add_argument('price', type=float)
         parser.add_argument('amount', type=float)
@@ -15,8 +15,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         item = Transaction(
-            name=options['name'],
-            type=options['type'],
+            asset=Asset.objects.get(id=options['asset_id']),
+            is_sell=options['is_sell'],
             date=options['date'],
             price=options['price'],
             amount=options['amount'],

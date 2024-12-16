@@ -1,4 +1,4 @@
-from ..models import Price, Transaction
+from ..models import Asset, Price, Transaction
 from .http_client import HTTPClient
 from .utils import format_bitcoin, format_full_price, format_perc, format_price
 
@@ -19,13 +19,13 @@ INVESTMENTS = {
 }
 TOTAL_CATEGORIES = [TOTAL_CATEGORY] + list(INVESTMENTS.keys())
 
-NAME_KEY = 'name'
-TYPE_KEY = 'type'
+ASSET_ID_KEY = 'id'
+ASSET_NAME_KEY = 'name'
+ASSET_KEY = 'asset_id'
+IS_SELL_KEY = 'is_sell'
 PRICE_KEY = 'price'
 AMOUNT_KEY = 'amount'
 FEE_KEY = 'fee'
-
-SELL_VALUE = 'SELL'
 
 IS_CLOSED_KEY = 'is_closed'
 MATCH_ID_KEY = 'match_id'
@@ -41,28 +41,38 @@ def build_context():
     return _build_context_data(transactions, prices)
 
 def _get_raw_transactions():
+    asset_names = _get_asset_names()
     transactions = {}
     for r in Transaction.objects.values():
         d = {}
         d[PRICE_KEY] = float(r[PRICE_KEY])
         d[AMOUNT_KEY] = float(r[AMOUNT_KEY])
         d[FEE_KEY] = float(r[FEE_KEY])
-        d[TYPE_KEY] = str(r[TYPE_KEY])
-        name = str(r[NAME_KEY])
-        if name not in transactions:
-            transactions[name] = [d]
+        d[IS_SELL_KEY] = bool(r[IS_SELL_KEY])
+        asset_id = int(r[ASSET_KEY])
+        asset_name = asset_names[asset_id]
+        if asset_name not in transactions:
+            transactions[asset_name] = [d]
         else:
-            transactions[name].append(d)
+            transactions[asset_name].append(d)
     return transactions
+
+def _get_asset_names():
+    assets = {}
+    for r in Asset.objects.values():
+        id = int(r[ASSET_ID_KEY])
+        name = str(r[ASSET_NAME_KEY])
+        assets[id] = name
+    return assets
 
 def _clean_transactions(raw_transactions):
     transactions = {}
     for name in raw_transactions:
-        sale_transactions = [t for t in raw_transactions[name] if t[TYPE_KEY] == SELL_VALUE]
+        sale_transactions = [t for t in raw_transactions[name] if t[IS_SELL_KEY]]
         transactions[name] = []
         match_id = 0
         for transaction in raw_transactions[name]:
-            if transaction[TYPE_KEY] != SELL_VALUE:
+            if not transaction[IS_SELL_KEY]:
                 found_match = False
                 for sale_transaction in sale_transactions:
                     if transaction[AMOUNT_KEY] == sale_transaction[AMOUNT_KEY]:
@@ -83,7 +93,7 @@ def _build_clean_transaction(raw_transaction, match_id=-1):
     transaction[FEE_KEY] = raw_transaction[FEE_KEY]
     transaction[MATCH_ID_KEY] = match_id
     transaction[IS_CLOSED_KEY] = match_id >= 0
-    transaction[TYPE_KEY] = raw_transaction[TYPE_KEY]
+    transaction[IS_SELL_KEY] = raw_transaction[IS_SELL_KEY]
     return transaction
 
 def _get_prices(transactions):
@@ -155,8 +165,8 @@ def _compute_grouped_realized_gains(transactions, _, category):
             for match_id in range(len(closed_transactions) // 2):
                 match_transactions = [t for t in closed_transactions if t[MATCH_ID_KEY] == match_id]
                 assert len(match_transactions) == 2, f'There should be 2 transaction with match id: {match_id}'
-                buy_t = [t for t in match_transactions if t[TYPE_KEY] != SELL_VALUE][0]
-                sell_t = [t for t in match_transactions if t[TYPE_KEY] == SELL_VALUE][0]
+                buy_t = [t for t in match_transactions if not t[IS_SELL_KEY]][0]
+                sell_t = [t for t in match_transactions if t[IS_SELL_KEY]][0]
                 realized_gains += buy_t[AMOUNT_KEY] * (sell_t[PRICE_KEY] - buy_t[PRICE_KEY])
     return realized_gains
 
@@ -169,8 +179,8 @@ def _compute_grouped_realized_gains(transactions, _, category):
 #             for match_id in range(len(closed_transactions) // 2):
 #                 match_transactions = [t for t in closed_transactions if t[MATCH_ID_KEY] == match_id]
 #                 assert len(match_transactions) == 2, f'There should be 2 transaction with match id: {match_id}'
-#                 buy_t = [t for t in match_transactions if t[TYPE_KEY] != SELL_VALUE][0]
-#                 sell_t = [t for t in match_transactions if t[TYPE_KEY] == SELL_VALUE][0]
+#                 buy_t = [t for t in match_transactions if not t[IS_SELL_KEY]][0]
+#                 sell_t = [t for t in match_transactions if t[IS_SELL_KEY]][0]
 #                 end += sell_t[AMOUNT_KEY] * sell_t[PRICE_KEY]
 #                 start += buy_t[AMOUNT_KEY] * buy_t[PRICE_KEY]
 #             open_transactions = [t for t in transactions[name] if not t[IS_CLOSED_KEY]]
@@ -232,11 +242,12 @@ def _save_prices(prices):
     existing_prices = Price.objects.filter(date=current_date)
     if len(existing_prices) > 0:
         for r in existing_prices:
-            r.price = prices[r.name]
+            r.price = prices[r.asset.name]
             r.save()
     else:
-        for name in prices:
-            Price(name=name, date=current_date, price=prices[name]).save()
+        for asset_name in prices:
+            asset = Asset.objects.get(name=asset_name)
+            Price(asset=asset, date=current_date, price=prices[asset_name]).save()
 
 def _get_current_date():
     from datetime import datetime
