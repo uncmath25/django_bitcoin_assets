@@ -8,10 +8,11 @@ class HTTPClient():
 
     @staticmethod
     def get_cnbc_quote(stock_name):
-        r = requests.get(f'https://www.cnbc.com/quotes/{stock_name}')
-        soup = BeautifulSoup(r.content, "html.parser")
-        raw_price = soup.findAll('span', {'class': 'QuoteStrip-lastPrice'})[0].text
-        return(float(raw_price.replace(',', '')))
+        # r = requests.get(f'https://www.cnbc.com/quotes/{stock_name}')
+        # soup = BeautifulSoup(r.content, "html.parser")
+        # raw_price = soup.findAll('span', {'class': 'QuoteStrip-lastPrice'})[0].text
+        # return(float(raw_price.replace(',', '')))
+        return float(os.environ[stock_name])
     
     @staticmethod
     def get_bitcoin_price():
@@ -20,7 +21,8 @@ class HTTPClient():
         # r = requests.get('https://coinmarketcap.com/currencies/bitcoin/')
         # soup = BeautifulSoup(r.content, "html.parser")
         # return soup.findAll('span', {'data-test': 'text-cdp-price-display'})[0].text
-        return HTTPClient.get_cnbc_quote('BTC.CM=')
+        # return HTTPClient.get_cnbc_quote('BTC.CM=')
+        return float(os.environ['BITCOIN'])
     
     @staticmethod
     def get_option_price(option_name):
