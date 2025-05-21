@@ -118,6 +118,8 @@ def _build_context_data(transactions, prices):
     unrealized_gains = {c: current_balances[c] - current_cost_bases[c] for c in INVESTMENTS}
     realized_gains = _compute_metric(transactions, prices, _compute_grouped_realized_gains)
     profits = {c: realized_gains[c] + unrealized_gains[c] for c in INVESTMENTS}
+    profit_percs = {c: current_balances[c] / current_cost_bases[c] - 1 for c in INVESTMENTS}
+    profit_percs[TOTAL_CATEGORY] = sum(current_balances.values()) / sum(current_cost_bases.values()) - 1
     allocations = {c: current_balances[c] / sum(current_balances.values()) for c in INVESTMENTS}
     total_bitcoin = _compute_total_bitcoin(transactions)
     return {
@@ -127,6 +129,7 @@ def _build_context_data(transactions, prices):
         'unrealized_gains': _format_metric(unrealized_gains),
         'realized_gains': _format_metric(realized_gains),
         'profits': _format_metric(profits),
+        'profit_percs': _format_perc(profit_percs, include_total=True),
         'allocations': _format_perc(allocations),
         'prices': _build_formatted_prices(prices),
         'total_bitcoin': format_bitcoin(total_bitcoin),
@@ -207,7 +210,9 @@ def _format_metric(metrics):
     metrics[TOTAL_CATEGORY] = sum(metrics.values())
     return [format_price(metrics[category]) for category in TOTAL_CATEGORIES]
 
-def _format_perc(metrics):
+def _format_perc(metrics, include_total=False):
+    if include_total:
+        return [format_perc(metrics[TOTAL_CATEGORY])] + [format_perc(metrics[category]) for category in INVESTMENTS]
     return [''] + [format_perc(metrics[category]) for category in INVESTMENTS]
 
 def _build_formatted_prices(prices):

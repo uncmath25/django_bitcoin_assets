@@ -40,9 +40,15 @@
                             {% endfor %}
                         </tr>
                         <tr>
-                            <th>Profit</th>
+                            <th>Total Profit</th>
                             {% for profit in profits %} 
                             <th>{{ profit }}</th>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            <th>Unrealized Profit %</th>
+                            {% for profit_perc in profit_percs %} 
+                            <th>{{ profit_perc }}</th>
                             {% endfor %}
                         </tr>
                         <!-- <tr>
