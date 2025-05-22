@@ -118,8 +118,8 @@ def _build_context_data(transactions, prices):
     unrealized_gains = {c: current_balances[c] - current_cost_bases[c] for c in INVESTMENTS}
     realized_gains = _compute_metric(transactions, prices, _compute_grouped_realized_gains)
     profits = {c: realized_gains[c] + unrealized_gains[c] for c in INVESTMENTS}
-    profit_percs = {c: current_balances[c] / current_cost_bases[c] - 1 for c in INVESTMENTS}
-    profit_percs[TOTAL_CATEGORY] = sum(current_balances.values()) / sum(current_cost_bases.values()) - 1
+    profit_percs = {c: current_balances[c] / (current_cost_bases[c] - realized_gains[c]) - 1 for c in INVESTMENTS}
+    profit_percs[TOTAL_CATEGORY] = sum(current_balances.values()) / ( sum(current_cost_bases.values()) - sum(realized_gains.values()) ) - 1
     allocations = {c: current_balances[c] / sum(current_balances.values()) for c in INVESTMENTS}
     total_bitcoin = _compute_total_bitcoin(transactions)
     return {
