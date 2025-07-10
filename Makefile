@@ -2,6 +2,8 @@
 
 DB_IMAGE="mariadb:11.5"
 DEV_IMAGE="uncmath25/django_bitcoin_assets_dev"
+DB_CONTAINER="mariadb"
+DEV_CONTAINER="django_bitcoin_assets_dev"
 REMOTE_DEV_DIR="/django_project"
 PROD_IMAGE="uncmath25/django_bitcoin_assets_prod"
 REMOTE_PROD_IMAGE="uncmath25/django_bitcoin_assets"
@@ -21,15 +23,25 @@ clean:
 run-dev: clean
 	@echo "*** Running Django dev server ***"
 	docker build -t $(DEV_IMAGE) -f Dockerfile-dev .
-	docker run -d --rm -e MYSQL_HOST=host.docker.internal -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 \
-		-v $$(pwd)/database/sample_dump_dev.sql:/docker-entrypoint-initdb.d/dump.sql $(DB_IMAGE)
+	docker run -d --rm \
+		-e MYSQL_HOST=host.docker.internal \
+		-e MYSQL_ROOT_PASSWORD=root \
+		-p 3306:3306 \
+		-v $$(pwd)/database/sample_dump_dev.sql:/docker-entrypoint-initdb.d/dump.sql \
+		--name $(DB_CONTAINER) \
+		$(DB_IMAGE)
 	sleep 5
-	docker run --rm --env-file=.env.dev -p 8000:8000 -v $$(pwd)/src:$(REMOTE_DEV_DIR) $(DEV_IMAGE)
+	docker run --rm \
+		--env-file=.env.dev \
+		-p 8000:8000 \
+		-v $$(pwd)/src:$(REMOTE_DEV_DIR) \
+		--name $(DEV_CONTAINER) \
+		$(DEV_IMAGE)
 
 stop-dev:
 	@echo "*** Stopping Django dev server ***"
-	docker rm -f "$$(docker ps -q --filter ancestor=$(DB_IMAGE))"
-	docker rm -f "$$(docker ps -q --filter ancestor=$(DEV_IMAGE))"
+	docker rm -f $(DB_CONTAINER)
+	docker rm -f $(DEV_CONTAINER)
 
 run-prod: clean
 	@echo "*** Running Django prod server ***"
